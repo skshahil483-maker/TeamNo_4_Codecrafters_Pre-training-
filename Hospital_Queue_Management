@@ -1,0 +1,87 @@
+from collections import deque
+
+# Queues
+emergency_queue = deque()
+normal_queue = deque()
+
+token_counter = 1
+
+def register_patient():
+    global token_counter
+    name = input("Enter patient name: ")
+    condition = input("Is it an emergency? (yes/no): ").lower()
+
+    token = f"T{token_counter}"
+    token_counter += 1
+
+    patient = (token, name)
+
+    if condition == "yes":
+        emergency_queue.append(patient)
+        print(f"Emergency Patient Registered | Token: {token}")
+    else:
+        normal_queue.append(patient)
+        print(f"Normal Patient Registered | Token: {token}")
+
+def display_current_next():
+    if emergency_queue:
+        current = emergency_queue[0]
+        next_patient = emergency_queue[1] if len(emergency_queue) > 1 else (normal_queue[0] if normal_queue else None)
+    elif normal_queue:
+        current = normal_queue[0]
+        next_patient = normal_queue[1] if len(normal_queue) > 1 else None
+    else:
+        print("No patients in queue.")
+        return
+
+    print(f"\nNow Serving: {current[0]} - {current[1]}")
+    if next_patient:
+        print(f"Next Patient: {next_patient[0]} - {next_patient[1]}")
+    else:
+        print("No next patient.")
+
+def remove_patient():
+    if emergency_queue:
+        served = emergency_queue.popleft()
+    elif normal_queue:
+        served = normal_queue.popleft()
+    else:
+        print("No patients to remove.")
+        return
+
+    print(f"Patient {served[0]} - {served[1]} has completed consultation.")
+
+def show_waiting_count():
+    total = len(emergency_queue) + len(normal_queue)
+    print(f"\nWaiting Patients:")
+    print(f"Emergency: {len(emergency_queue)}")
+    print(f"Normal: {len(normal_queue)}")
+    print(f"Total Waiting: {total}")
+
+def menu():
+    while True:
+        print("\n--- Hospital Queue Management ---")
+        print("1. Register Patient")
+        print("2. Display Current & Next Patient")
+        print("3. Remove Patient After Consultation")
+        print("4. Show Waiting Count")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            register_patient()
+        elif choice == "2":
+            display_current_next()
+        elif choice == "3":
+            remove_patient()
+        elif choice == "4":
+            show_waiting_count()
+        elif choice == "5":
+            print("Exiting system. Thank you!")
+            break
+        else:
+            print("Invalid choice. Try again.")
+
+# Run the program
+menu()
